@@ -128,22 +128,41 @@ window.onkeypress = function(e){
 }
 
 var landed = false;
-
+var crashed = false;
 //draw the moon surface
 moonsurface = function(){
 }
 
 CheckLanding = function(){
-	if(moonsurface[mlander.posx] <= mlander.posy+55)
+	if(moonsurface[mlander.posx] <= mlander.posy+55) {
 		landed = true;
+		if(((moonsurface[mlander.posx] - moonsurface[mlander.posx+69]) > 3)  || (mb.xi>0 || mb.yi>1))
+			crashed = true;
+	}
 }
 
 //function to run on the timer!!
 Timer.run = function() {
+	if(landed) 
+	{
+		if(crashed) {
+			ctx.fillStyle="#000000";
+			ctx.beginPath();
+			ctx.arc(mlander.posx+30, mlander.posy+30, 45, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.fill();
+			expelement = document.getElementById("explode");
+			ctx.drawImage(expelement,mlander.posx,mlander.posy);
+			alert('you crashed!')
+		} else {
+			alert('perfect landing!')
+		}
+		//HACK! need a true constructor at page start
+		landed = crashed = false;
+		location.reload(true);
+	}
 	if(!landed) {
 		Timer.update();
-
-		CheckLanding();
 
 		ctx.fillStyle="#000000";	
 		ctx.fillRect(mlander.posx-2, mlander.posy-3, 70, 55);
@@ -152,6 +171,7 @@ Timer.run = function() {
 		ctx.drawImage(landerelement,mlander.posx,mlander.posy);
 
 		mlander.posy++;
+		CheckLanding();
 	}
 };
 
@@ -160,11 +180,11 @@ moonsurface.draw = function() {
 	var x = rect.left-150;
 	var y = rect.bottom;
 	ctx.moveTo(x, y);
-	y = y-80;
+	y = y-130;
 	ctx.lineTo(x, y);
 	var count = 0;
 	while(x<=rect.right) {
-		y += (randfunc()*2);
+		y += ((randfunc()+randfunc())*3);
         ctx.lineTo(x,y);
         moonsurface[x]=y;
         x=x+3;
