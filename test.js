@@ -3,6 +3,12 @@ Timer = function() {
 	this.stability = 10;
 }
 
+Lander = function()
+{
+	this.posx = 400;
+	this.posy = 200;
+}
+
 //randomly returns a +1 or -1
 randfunc = function(){
 	if(Math.random()<0.5) 
@@ -21,12 +27,12 @@ mb = new moveby();
 //update x and y coordinate with randfunc value
 Timer.update = function() {
 	if(isclicked){
-		x = mousex;
-		y = mousey;
+		mlander.posx = mousex;
+		mlander.posy = mousey;
 	}
 
-	x += (randfunc()+(mb.xi));
-	y += (randfunc()+(mb.yi));
+	mlander.posx += (randfunc()+(mb.xi));
+	mlander.posy += (randfunc()+(mb.yi));
 }
 
 function updatemouseloc(e) {
@@ -71,11 +77,11 @@ InitGui = function(gui){
 
 //when the page loads init your vars and get the canvas and context
 window.onload = function() {
-	x = 400;
-	y = 200;
 	mousex = 0;
 	mousey = 0;
-	
+
+	mlander = new Lander();
+
 	c = document.getElementById("myCanvas");
 	ctx = c.getContext("2d");
 
@@ -125,18 +131,18 @@ window.onkeypress = function(e){
 //function to run on the timer!!
 Timer.run = function() {
 	ctx.fillStyle="#000000";
-	ctx.fillRect(x,y,65,50);
+	ctx.fillRect(mlander.posx,mlander.posy,65,50);
 	document.onmousemove = updatemouseloc;
 	document.onmousedown = setclicked;
 	Timer.update();
-	ctx.drawImage(document.getElementById("flag"),x,y);
+	ctx.drawImage(document.getElementById("flag"),mlander.posx,mlander.posy);
 };
 
 //draw the moon surface
 moonsurface = function(){
 }
 
-moonsurface.draw() = function() {
+moonsurface.draw = function() {
 	// rect = ctx.canvas.getBoundingClientRect();
 	// ctx.moveTo(rect.left, rect.bottom);
 	// var x = rect.left;
