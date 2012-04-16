@@ -132,4 +132,19 @@ Timer.run = function() {
 	ctx.drawImage(document.getElementById("flag"),x,y);
 };
 
-//timer interval is 10ms
+//draw the moon surface
+moonsurface = function(){
+}
+
+moonsurface.draw() = function() {
+	// rect = ctx.canvas.getBoundingClientRect();
+	// ctx.moveTo(rect.left, rect.bottom);
+	// var x = rect.left;
+	// while(x!=rect.right)
+ //        ctx.lineTo(ix+2,iy+0);
+ //        ctx.closePath();
+ //        ctx.fill();
+
+	// for (var i in this.pts)
+	// 	ctx.draw(pts[i]);
+}
