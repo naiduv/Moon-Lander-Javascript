@@ -124,8 +124,8 @@ window.onkeypress = function(e){
 
 //function to run on the timer!!
 Timer.run = function() {
-	ctx.fillStyle="#FFFFFF";
-	ctx.fillRect(x,y,50,50);
+	ctx.fillStyle="#000000";
+	ctx.fillRect(x,y,65,50);
 	document.onmousemove = updatemouseloc;
 	document.onmousedown = setclicked;
 	Timer.update();
