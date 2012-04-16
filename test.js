@@ -129,8 +129,13 @@ window.onkeypress = function(e){
 
 var landed = false;
 
-CheckLanding = function(){
+//draw the moon surface
+moonsurface = function(){
+}
 
+CheckLanding = function(){
+	if(moonsurface[mlander.posx] <= mlander.posy+55)
+		landed = true;
 }
 
 //function to run on the timer!!
@@ -150,11 +155,6 @@ Timer.run = function() {
 	}
 };
 
-//draw the moon surface
-moonsurface = function(){
-	this.pts = new Array();
-}
-
 moonsurface.draw = function() {
 	rect = ctx.canvas.getBoundingClientRect();
 	var x = rect.left-150;
@@ -166,6 +166,7 @@ moonsurface.draw = function() {
 	while(x<=rect.right) {
 		y += (randfunc()*2);
         ctx.lineTo(x,y);
+        moonsurface[x]=y;
         x=x+3;
         count++;
 	}
