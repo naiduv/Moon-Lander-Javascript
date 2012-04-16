@@ -7,6 +7,7 @@ Lander = function()
 {
 	this.posx = 400;
 	this.posy = 200;
+	this.rect;
 }
 
 //randomly returns a +1 or -1
@@ -43,9 +44,6 @@ function updatemouseloc(e) {
 var isclicked = false;
 
 function setclicked(e) {
-	if(e.pageX>500 || e.pageY>500)
-		return;
-
 	if(isclicked)
 		isclicked = false;
 	else
@@ -85,8 +83,9 @@ window.onload = function() {
 	c = document.getElementById("myCanvas");
 	ctx = c.getContext("2d");
 
-	gui = new dat.GUI();
+	moonsurface.draw();
 
+	gui = new dat.GUI();
 	//initialize the gui
 	InitGui(gui);
 
@@ -128,29 +127,50 @@ window.onkeypress = function(e){
 	updateGuiControls(gui);
 }
 
+var landed = false;
+
+CheckLanding = function(){
+
+}
+
 //function to run on the timer!!
 Timer.run = function() {
-	ctx.fillStyle="#000000";
-	ctx.fillRect(mlander.posx,mlander.posy,65,50);
-	document.onmousemove = updatemouseloc;
-	document.onmousedown = setclicked;
-	Timer.update();
-	ctx.drawImage(document.getElementById("flag"),mlander.posx,mlander.posy);
+	if(!landed) {
+		Timer.update();
+
+		CheckLanding();
+
+		ctx.fillStyle="#000000";	
+		ctx.fillRect(mlander.posx-2, mlander.posy-3, 70, 55);
+
+		landerelement = document.getElementById("lander");
+		ctx.drawImage(landerelement,mlander.posx,mlander.posy);
+
+		mlander.posy++;
+	}
 };
 
 //draw the moon surface
 moonsurface = function(){
+	this.pts = new Array();
 }
 
 moonsurface.draw = function() {
-	// rect = ctx.canvas.getBoundingClientRect();
-	// ctx.moveTo(rect.left, rect.bottom);
-	// var x = rect.left;
-	// while(x!=rect.right)
- //        ctx.lineTo(ix+2,iy+0);
- //        ctx.closePath();
- //        ctx.fill();
-
-	// for (var i in this.pts)
-	// 	ctx.draw(pts[i]);
+	rect = ctx.canvas.getBoundingClientRect();
+	var x = rect.left-150;
+	var y = rect.bottom;
+	ctx.moveTo(x, y);
+	y = y-80;
+	ctx.lineTo(x, y);
+	var count = 0;
+	while(x<=rect.right) {
+		y += (randfunc()*2);
+        ctx.lineTo(x,y);
+        x=x+3;
+        count++;
+	}
+	ctx.lineTo(rect.right+50, rect.bottom);
+	ctx.closePath();
+	ctx.fillStyle = "#DBE6E0"
+    ctx.fill();
 }
