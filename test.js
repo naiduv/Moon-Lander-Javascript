@@ -169,12 +169,13 @@ Timer.run = function() {
 			ctx.fill();
 			expelement = document.getElementById("explode");
 			ctx.drawImage(expelement,mlander.posx,mlander.posy);
+			landed = crashed = false;
 			alert('you crashed!')
 		} else {
+			landed=false;
 			alert('perfect landing!')
 		}
 		//HACK! need a true constructor at page start
-		landed = crashed = false;
 		location.reload(true);
 	}
 	if(!landed) {
@@ -200,10 +201,11 @@ moonsurface.draw = function() {
 	ctx.lineTo(x, y);
 	var count = 0;
 	while(x<=rect.right) {
-		y += ((randfunc()+randfunc())*3);
+		if(randfunc()>0)
+			y += ((randfunc()+randfunc())*3);
         ctx.lineTo(x,y);
         moonsurface[x]=y;
-        x=x+3;
+        x=x+1;
         count++;
 	}
 	ctx.lineTo(rect.right+50, rect.bottom);
