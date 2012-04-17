@@ -98,6 +98,26 @@ updateGuiControls = function(gui) {
 	}
 }
 
+movedown = function() {
+	if(mb.yi<5)
+		mb.yi++;
+}
+
+moveup = function() {
+	if(mb.yi>-5)
+		mb.yi--;
+}
+
+moveright = function() {
+	if(mb.xi<5)
+		mb.xi++;
+}
+
+moveleft = function() {
+	if(mb.xi>-5)
+		mb.xi--;
+}
+
 window.onkeypress = function(e){
 	var evtobj=window.event? event : e;
 	var unicode=evtobj.charCode? evtobj.charCode : evtobj.keyCode;
@@ -105,20 +125,16 @@ window.onkeypress = function(e){
 	
 	switch(actualkey) {
 		case "w":
-			if(mb.yi<5)
-				mb.yi++;
+			movedown();
 			break;
 		case "s":
-			if(mb.yi>-5)
-				mb.yi--;
+			moveup();
 			break;
 		case "a":
-			if(mb.xi<5)
-				mb.xi++;
+			moveright();
 			break;
 		case "d":
-			if(mb.xi>-5)
-				mb.xi--;
+			moveleft();
 			break;
 		default:
 			return;
