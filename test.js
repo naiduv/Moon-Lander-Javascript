@@ -14,8 +14,6 @@ moonsurface = function(){
 	this.pts = new Array();
 }
 
-
-
 moonsurface.prototype = {
 	draw: function() {
 		rect = ctx.canvas.getBoundingClientRect();
@@ -51,6 +49,7 @@ Lander = function()
 	this.crashed = false;
 	this.landed = false;
 	this.accelerating = false;
+	this.crashmsg = "slow down"
 }
 
 var increment = 5;
@@ -63,8 +62,15 @@ Lander.prototype = {
 		if(gmoonsurface.pts[this.posx] <= this.posy+55) {
 			this.landed = true;
 			val = Math.abs(gmoonsurface.pts[this.posx]-gmoonsurface.pts[this.posx+69]);
-			if(val > 3 || this.accelerating)
+			if(val > 3) {
+				this.crashed = true;	
+				this.crashmsg = "You died. Try landing on more even ground.";
+			}
+			else if(this.accelerating){
 				this.crashed = true;
+				this.crashmsg = "You died. Try slowing down next time.";
+			}
+
 		}
 	},
 
@@ -172,10 +178,10 @@ Timer.run = function() {
 			expelement = document.getElementById("explode");
 			ctx.drawImage(expelement,glander.posx,glander.posy);
 			glander.landed = glander.crashed = false;
-			alert('you crashed!')
+			alert(glander.crashmsg)
 		} else {
 			glander.landed=false;
-			alert('perfect landing!')
+			alert('Perfect landing!')
 		}
 		//HACK! need a true constructor at page start
 		glander = undefined;
