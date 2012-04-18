@@ -100,27 +100,36 @@ updateGuiControls = function(gui) {
 	}
 }
 
+filldirtyrect = function(x,y,w,h){
+	ctx.fillStyle="#000000";	
+	ctx.fillRect(x, y, w, h);
+}
+
 increment = 5;
 
 movedown = function() {
+	filldirtyrect();
 	mlander.posy+=increment;
 	if(mb.yi<5)
 	 	mb.yi++;
 }
 
 moveup = function() {
+	filldirtyrect();
 	mlander.posy-=increment;
 	if(mb.yi>-5)
 	 	mb.yi--;
 }
 
 moveright = function() {
+	filldirtyrect();
 	mlander.posx+=increment;
 	// if(mb.xi<5)
 	// 	mb.xi++;
 }
 
 moveleft = function() {
+	filldirtyrect();
 	mlander.posx-=increment;
 	// if(mb.xi>-5)
 	// 	mb.xi--;
@@ -189,12 +198,12 @@ Timer.run = function() {
 	if(!landed) {
 		Timer.update();
 
-		ctx.fillStyle="#000000";	
-		ctx.fillRect(mlander.posx-10, mlander.posy-10, 80, 70);
+		// ctx.fillStyle="#000000";	
+		// ctx.fillRect(mlander.posx-10, mlander.posy-10, 80, 70);
 
 		landerelement = document.getElementById("lander");
 		ctx.drawImage(landerelement,mlander.posx,mlander.posy);
-
+		mlander.rect = landerelement.getBoundingClientRect();
 		mlander.posy++;
 
 		CheckLanding();
