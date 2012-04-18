@@ -10,6 +10,8 @@ Lander = function()
 	this.rect;
 }
 
+var mlander;
+
 //randomly returns a +1 or -1
 randfunc = function(){
 	if(Math.random()<0.5) 
@@ -27,13 +29,13 @@ mb = new moveby();
 
 //update x and y coordinate with randfunc value
 Timer.update = function() {
-	if(isclicked){
-		mlander.posx = mousex;
-		mlander.posy = mousey;
-	}
+	// if(isclicked){
+	// 	mlander.posx = mousex;
+	// 	mlander.posy = mousey;
+	// }
 
-	mlander.posx += (randfunc()+(mb.xi));
-	mlander.posy += (randfunc()+(mb.yi));
+	// mlander.posx += (randfunc()+(mb.xi));
+	// mlander.posy += (randfunc()+(mb.yi));
 }
 
 function updatemouseloc(e) {
@@ -98,24 +100,30 @@ updateGuiControls = function(gui) {
 	}
 }
 
+increment = 5;
+
 movedown = function() {
+	mlander.posy+=increment;
 	if(mb.yi<5)
-		mb.yi++;
+	 	mb.yi++;
 }
 
 moveup = function() {
+	mlander.posy-=increment;
 	if(mb.yi>-5)
-		mb.yi--;
+	 	mb.yi--;
 }
 
 moveright = function() {
-	if(mb.xi<5)
-		mb.xi++;
+	mlander.posx+=increment;
+	// if(mb.xi<5)
+	// 	mb.xi++;
 }
 
 moveleft = function() {
-	if(mb.xi>-5)
-		mb.xi--;
+	mlander.posx-=increment;
+	// if(mb.xi>-5)
+	// 	mb.xi--;
 }
 
 window.onkeypress = function(e){
@@ -182,12 +190,13 @@ Timer.run = function() {
 		Timer.update();
 
 		ctx.fillStyle="#000000";	
-		ctx.fillRect(mlander.posx-2, mlander.posy-3, 70, 55);
+		ctx.fillRect(mlander.posx-10, mlander.posy-10, 80, 70);
 
 		landerelement = document.getElementById("lander");
 		ctx.drawImage(landerelement,mlander.posx,mlander.posy);
 
 		mlander.posy++;
+
 		CheckLanding();
 	}
 };
@@ -202,10 +211,10 @@ moonsurface.draw = function() {
 	var count = 0;
 	while(x<=rect.right) {
 		if(randfunc()>0)
-			y += ((randfunc()+randfunc())*3);
+			y += ((randfunc()+randfunc())*1);
         ctx.lineTo(x,y);
         moonsurface[x]=y;
-        x=x+1;
+        x++;
         count++;
 	}
 	ctx.lineTo(rect.right+50, rect.bottom);
