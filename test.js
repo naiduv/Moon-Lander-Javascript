@@ -1,16 +1,85 @@
 //this is your timer, does nothing right now
 Timer = function() {
-	this.stability = 10;
 }
+
+//draw the moon surface
+moonsurface = function(){
+	this.pts = new Array();
+}
+
+moonsurface.prototype = {
+	draw: function() {
+		rect = ctx.canvas.getBoundingClientRect();
+		var x = rect.left-150;
+		var y = rect.bottom;
+		ctx.moveTo(x, y);
+		y = y-130;
+		ctx.lineTo(x, y);
+		var count = 0;
+		while(x<=rect.right) {
+			if(randfunc()>0)
+				y += ((randfunc()+randfunc())*1);
+			ctx.lineTo(x,y);
+        	this.pts[x]=y;
+        	x++;
+        	count++;
+		}
+		ctx.lineTo(rect.right+50, rect.bottom);
+		ctx.closePath();
+		ctx.fillStyle = "#DBE6E0"
+   		ctx.fill();
+	},
+};
 
 Lander = function()
 {
+	this.landerelement = document.getElementById("lander");
 	this.posx = 400;
 	this.posy = 200;
 	this.rect;
+	this.crashed = false;
+	this.landed = false;
 }
 
-var mlander;
+increment = 5;
+
+Lander.prototype = {
+	checkLanding: function(){
+		if(gmoonsurface.pts[this.posx] <= this.posy+55) {
+			this.landed = true;
+			if(((gmoonsurface.pts[this.posx] - gmoonsurface.pts[this.posx+69]) > 3))
+				this.crashed = true;
+		}
+	},
+
+	movedown: function() {
+		filldirtyrect();
+		this.posy+=increment;
+	},
+
+	moveup: function() {
+		filldirtyrect();
+		this.posy-=increment;
+	},
+
+	moveright: function() {
+		filldirtyrect();
+		this.posx+=increment;
+	},
+
+	moveleft: function() {
+		filldirtyrect();
+		this.posx-=increment;
+	},
+
+	draw: function() {
+		ctx.drawImage(this.landerelement,this.posx,this.posy);
+	},
+
+};
+
+var glander;
+var gmoonsurface;
 
 //randomly returns a +1 or -1
 randfunc = function(){
@@ -20,119 +89,22 @@ randfunc = function(){
 		return -1;
 }
 
-moveby = function(){
-	this.xi = 0;
-	this.yi = 0;
-}
-
-mb = new moveby();
-
-//update x and y coordinate with randfunc value
-Timer.update = function() {
-	// if(isclicked){
-	// 	mlander.posx = mousex;
-	// 	mlander.posy = mousey;
-	// }
-
-	// mlander.posx += (randfunc()+(mb.xi));
-	// mlander.posy += (randfunc()+(mb.yi));
-}
-
-function updatemouseloc(e) {
-	mousex = e.pageX;
-	mousey = e.pageY;
-}
-
-var isclicked = false;
-
-function setclicked(e) {
-	if(isclicked)
-		isclicked = false;
-	else
-		isclicked = true;
-}
-
-InitGui = function(gui){
-	newTimer = new Timer();
-	var controlstability = gui.add(newTimer,'stability',0,50);
-
-	// newMoveBy = new moveby();
-	var controlMoveByX = gui.add(mb,'xi',-5,5);
-	var controlMoveByY = gui.add(mb,'yi',-5,5);
-
-	controlstability.onChange(function(value){
-	clearInterval(Timer._intervalId);
-	Timer._intervalId = setInterval(Timer.run, value);
-	});
-
-	controlMoveByX.onChange(function(value){
-		mb.xi = value;
-	});
-
-	controlMoveByY.onChange(function(value){
-		mb.yi = value;
-	});
-
-}
-
 //when the page loads init your vars and get the canvas and context
 window.onload = function() {
-	mousex = 0;
-	mousey = 0;
-
-	mlander = new Lander();
-
 	c = document.getElementById("myCanvas");
 	ctx = c.getContext("2d");
 
-	moonsurface.draw();
+	glander = new Lander();
 
-	gui = new dat.GUI();
-	//initialize the gui
-	InitGui(gui);
+	gmoonsurface = new moonsurface();
+	gmoonsurface.draw();
 
-	Timer._intervalId = setInterval(Timer.run, Timer.stability);
-}
-
-updateGuiControls = function(gui) {
-	for (var i in gui.__controllers) {
- 		gui.__controllers[i].updateDisplay();
-	}
+	Timer._intervalId = setInterval(Timer.run, 10);
 }
 
 filldirtyrect = function(x,y,w,h){
 	ctx.fillStyle="#000000";	
 	ctx.fillRect(x, y, w, h);
-}
-
-increment = 5;
-
-movedown = function() {
-	filldirtyrect();
-	mlander.posy+=increment;
-	if(mb.yi<5)
-	 	mb.yi++;
-}
-
-moveup = function() {
-	filldirtyrect();
-	mlander.posy-=increment;
-	if(mb.yi>-5)
-	 	mb.yi--;
-}
-
-moveright = function() {
-	filldirtyrect();
-	mlander.posx+=increment;
-	// if(mb.xi<5)
-	// 	mb.xi++;
-}
-
-moveleft = function() {
-	filldirtyrect();
-	mlander.posx-=increment;
-	// if(mb.xi>-5)
-	// 	mb.xi--;
 }
 
 window.onkeypress = function(e){
@@ -142,92 +114,50 @@ window.onkeypress = function(e){
 	
 	switch(actualkey) {
 		case "w":
-			movedown();
+			glander.movedown();
 			break;
 		case "s":
-			moveup();
+			glander.moveup();
 			break;
 		case "a":
-			moveright();
+			glander.overight();
 			break;
 		case "d":
-			moveleft();
+			glander.moveleft();
 			break;
 		default:
 			return;
-	}
-	
-	updateGuiControls(gui);
-}
-
-var landed = false;
-var crashed = false;
-//draw the moon surface
-moonsurface = function(){
-}
-
-CheckLanding = function(){
-	if(moonsurface[mlander.posx] <= mlander.posy+55) {
-		landed = true;
-		if(((moonsurface[mlander.posx] - moonsurface[mlander.posx+69]) > 3)  || (mb.xi>0 || mb.yi>1))
-			crashed = true;
 	}
 }
 
 //function to run on the timer!!
 Timer.run = function() {
-	if(landed) 
+	if(!glander)
+		return;
+
+	if(glander.landed) 
 	{
-		if(crashed) {
+		if(glander.crashed) {
 			ctx.fillStyle="#000000";
 			ctx.beginPath();
-			ctx.arc(mlander.posx+30, mlander.posy+30, 45, 0, Math.PI*2, true); 
+			ctx.arc(glander.posx+30, glander.posy+30, 45, 0, Math.PI*2, true); 
 			ctx.closePath();
 			ctx.fill();
 			expelement = document.getElementById("explode");
-			ctx.drawImage(expelement,mlander.posx,mlander.posy);
-			landed = crashed = false;
+			ctx.drawImage(expelement,glander.posx,glander.posy);
+			glander.landed = glander.crashed = false;
 			alert('you crashed!')
 		} else {
-			landed=false;
+			glander.landed=false;
 			alert('perfect landing!')
 		}
 		//HACK! need a true constructor at page start
+		glander = undefined;
 		location.reload(true);
 	}
-	if(!landed) {
-		Timer.update();
-
-		// ctx.fillStyle="#000000";	
-		// ctx.fillRect(mlander.posx-10, mlander.posy-10, 80, 70);
-
-		landerelement = document.getElementById("lander");
-		ctx.drawImage(landerelement,mlander.posx,mlander.posy);
-		mlander.rect = landerelement.getBoundingClientRect();
-		mlander.posy++;
-
-		CheckLanding();
+	if(!glander.landed) {
+		glander.draw();
+		glander.posy++;
+		glander.checkLanding();
 	}
 };
-
-moonsurface.draw = function() {
-	rect = ctx.canvas.getBoundingClientRect();
-	var x = rect.left-150;
-	var y = rect.bottom;
-	ctx.moveTo(x, y);
-	y = y-130;
-	ctx.lineTo(x, y);
-	var count = 0;
-	while(x<=rect.right) {
-		if(randfunc()>0)
-			y += ((randfunc()+randfunc())*1);
-        ctx.lineTo(x,y);
-        moonsurface[x]=y;
-        x++;
-        count++;
-	}
-	ctx.lineTo(rect.right+50, rect.bottom);
-	ctx.closePath();
-	ctx.fillStyle = "#DBE6E0"
-    ctx.fill();
-}
