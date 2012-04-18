@@ -2,26 +2,35 @@
 Timer = function() {
 }
 
+Rect = function(x,y,w,h){
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+}
+
 //draw the moon surface
 moonsurface = function(){
 	this.pts = new Array();
 }
 
+
+
 moonsurface.prototype = {
 	draw: function() {
 		rect = ctx.canvas.getBoundingClientRect();
-		var x = rect.left-150;
-		var y = rect.bottom;
+		x = rect.left-150;
+		y = rect.bottom;
 		ctx.moveTo(x, y);
 		y = y-130;
 		ctx.lineTo(x, y);
-		var count = 0;
+		count = 0;
 		while(x<=rect.right) {
-			if(randfunc()>0)
-				y += ((randfunc()+randfunc())*1);
+			randval = randfuncy();
+			y += randval;
 			ctx.lineTo(x,y);
         	this.pts[x]=y;
-        	x++;
+        	x=x+1;
         	count++;
 		}
 		ctx.lineTo(rect.right+50, rect.bottom);
@@ -36,39 +45,48 @@ Lander = function()
 	this.landerelement = document.getElementById("lander");
 	this.posx = 400;
 	this.posy = 200;
-	this.rect;
+	this.wt = 65;
+	this.ht = 50;
+	this.rect = new Rect(this.posx, this.posy, this.wt, this.ht);
 	this.crashed = false;
 	this.landed = false;
+	this.accelerating = false;
 }
 
-increment = 5;
+var increment = 5;
+var increment1 = increment+1;
+var imagewidth = 65;
+var imageheight = 50;
 
 Lander.prototype = {
 	checkLanding: function(){
 		if(gmoonsurface.pts[this.posx] <= this.posy+55) {
 			this.landed = true;
-			if(((gmoonsurface.pts[this.posx] - gmoonsurface.pts[this.posx+69]) > 3))
+			val = Math.abs(gmoonsurface.pts[this.posx]-gmoonsurface.pts[this.posx+69]);
+			if(val > 3 || this.accelerating)
 				this.crashed = true;
 		}
 	},
 
 	movedown: function() {
-		filldirtyrect();
+		filldirtyrect(this.posx,this.posy,imagewidth,increment1);
 		this.posy+=increment;
+		this.accelerating = true;
 	},
 
 	moveup: function() {
-		filldirtyrect();
+		filldirtyrect(this.posx,this.posy+imageheight,imagewidth,increment1);
 		this.posy-=increment;
+		this.accelerating = false;
 	},
 
 	moveright: function() {
-		filldirtyrect();
+		filldirtyrect(this.posx, this.posy, increment1, imageheight);
 		this.posx+=increment;
 	},
 
 	moveleft: function() {
-		filldirtyrect();
+		filldirtyrect(this.posx+imagewidth, this.posy, increment1, imageheight);
 		this.posx-=increment;
 	},
 
@@ -82,11 +100,19 @@ var glander;
 var gmoonsurface;
 
 //randomly returns a +1 or -1
-randfunc = function(){
-	if(Math.random()<0.5) 
-		return 1; 
-	else 
+randfuncy = function(){
+	val = Math.random();
+	if (val<=0.1)
+		return 2;
+	else if (val<=0.3)
+		return 1;
+	else if(val<=0.72)
+		return 0;
+	else if(val<=0.9)
 		return -1;
+	else if(val<=1)
+		return -2;
+	
 }
 
 //when the page loads init your vars and get the canvas and context
@@ -120,7 +146,7 @@ window.onkeypress = function(e){
 			glander.moveup();
 			break;
 		case "a":
-			glander.overight();
+			glander.moveright();
 			break;
 		case "d":
 			glander.moveleft();
@@ -154,10 +180,13 @@ Timer.run = function() {
 		//HACK! need a true constructor at page start
 		glander = undefined;
 		location.reload(true);
+		return;
 	}
 	if(!glander.landed) {
 		glander.draw();
-		glander.posy++;
+		if(glander.accelerating)
+			glander.posy++;
+		glander.posy++; //gravity hack
 		glander.checkLanding();
 	}
 };
